@@ -1,26 +1,32 @@
 import React from 'react';
-import logo from './logo.svg';
+import Login from './components/login/login';
+import Search from './components/search/search';
+import setAuthorizationToken from './components/utils/setAuthToken';
 import './App.css';
 
+
+global.JWT = null;
+
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    setAuthorizationToken(localStorage.jwtToken);
+
+    return (
+        <div className="App">
+            <h2> Getting Started with Crime (Updated)</h2>
+
+            <h1> Gerard HELLO YOUR TOKEN IS </h1> {global.JWT}
+            <Login/>
+
+            {(localStorage.jwtToken) ? <Search/> : ''}
+
+
+            <h2> Query Responses </h2>
+
+            <div id="app"></div>
+        </div>
+    );
 }
+
 
 export default App;
