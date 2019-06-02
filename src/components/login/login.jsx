@@ -1,105 +1,91 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
+import {Form, Button} from "react-bootstrap";
 import setAuthorizationToken from '../../components/utils/setAuthToken';
+import Search from "../../App";
+import SweetAlert from 'sweetalert2-react';
 
 export default class Login extends React.Component {
+
     constructor(props) {
         super(props);
-
         this.state = {
+            isLoading: false,
             email: "",
             password: "",
+            message: "",
+            show: false,
             loginUrl: "https://cab230.hackhouse.sh/login",
-            submitting: false
         };
     }
 
-    onChange(e) {
-        this.setState({
-            email: e.target.value
-        });
-    }
-
-    setPassword(e) {
-        this.setState({
-            password: e.target.value
-        });
-    }
-
-    loginAttempt() {
-        fetch("https://cab230.hackhouse.sh/login", {
+    loginAttempt = () => {
+        let password = document.getElementById("password").value;
+        let email = document.getElementById("email").value;
+        console.log(email);
+        console.log(password);
+        fetch(this.state.loginUrl, {
             method: "POST",
-            body: `email=g@g&password=gg`,
+            body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(
+                password
+            )}`,
             headers: {
                 "Content-type": "application/x-www-form-urlencoded"
             }
-        }).then(function (response) {
-            if (response.ok) {
-                return response.json();
-            }
+        }).then((response) => {
+            return response.json();
             throw new Error("Network response was not ok.");
-        }).then(function (result) {
+        }).then((result) => {
 
-            const token = result.token;
-            localStorage.setItem('jwtToken', token);
-            setAuthorizationToken(token);
-            console.log("login success");
-            console.log(token);
-        }).catch(function (error) {
+
+            this.setState({show: true, message: result.message});
+
+        }).catch((error) => {
             console.log(
                 "There has been a problem with your fetch operation: ",
                 error.message
             );
         });
-    }
+    };
 
     render() {
         return (
             <div className="login">
-                <h2>LOGIN :</h2>
-                <form
+
+                <h2> Login </h2>
+                <Form
                     onSubmit={event => {
                         event.preventDefault();
                     }}
                 >
-                    <label htmlFor="name">Email:</label>
+                    <Form.Group controlId="formBasicEmail">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control type="email" placeholder="Enter email" id="email"/>
+                        <Form.Text className="text-muted">
+                            We'll never share your email with anyone else.
+                        </Form.Text>
+                    </Form.Group>
 
-                    <input
-                        name="email"
-                        id="email"
-                        type="email"
-                        placeholder="Email address"
-                        value={this.state.email}
-                        onChange={event => {
-                            this.onChange(event);
-                        }}
-                    />
-                    <br/>
-                    <label htmlFor="name">Password:</label>
-                    <input
-                        name="password"
-                        id="password"
-                        type="password"
-                        placeholder="password"
-                        value={this.state.password}
-                        onChange={event => {
-                            this.setPassword(event);
-                        }}
-                    />
+                    <Form.Group controlId="formBasicPassword">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password" placeholder="Password" id="password"/>
+                    </Form.Group>
 
-                    <br/>
-                    <button
+                    <Button
                         onClick={event => {
-                            // make_a_login_function_like_the_example();
-                            /* WITHIN THIS FUNCTION YOU WILL SET THE TOKEN ONCE THE fetch RETURNS OK
-                                        you do this by using props.onLogin(response.token)
-                                        */
                             this.loginAttempt();
                         }}
                         type="submit"
                     >
-                        Submit
-                    </button>
-                </form>
+                        Login
+                    </Button>
+                </Form>
+
+                <SweetAlert
+                    show={this.state.show}
+                    title="CAB 230"
+                    text={this.state.message}
+                    onConfirm={() => this.setState({show: false})}
+                />
             </div>
         );
     }

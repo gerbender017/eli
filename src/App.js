@@ -3,6 +3,7 @@ import Login from './components/login/login';
 import Search from './components/search/search';
 import setAuthorizationToken from './components/utils/setAuthToken';
 import './App.css';
+import Registration from "./components/registration/registration";
 
 
 global.JWT = null;
@@ -13,17 +14,10 @@ function App() {
 
     return (
         <div className="App">
-            <h2> Getting Started with Crime (Updated)</h2>
-
-            <h1> Gerard HELLO YOUR TOKEN IS </h1> {global.JWT}
             <Login/>
 
+            <Registration/>
             {(localStorage.jwtToken) ? <Search/> : ''}
-
-
-            <h2> Query Responses </h2>
-
-            <div id="app"></div>
         </div>
     );
 }
